@@ -12,6 +12,7 @@
  * This engine makes the canvas' context (ctx) object globally available to make 
  * writing app.js a little simpler to work with.
  */
+'use strict';
 
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
@@ -24,9 +25,18 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = 505;
-    canvas.height = 606;
+    let gameHeader = '<header><div class ="game-data"><h2 id="points">' +
+                     '</h2></div><div class="game-data"><h1 id="level">' +
+                     'Level 1</h1></div><div class="game-data"><h2><ul>' +
+                     '<li class="fontawesome-heart"></li>' +
+                     '<li class="fontawesome-heart"></li>' +
+                     '<li class="fontawesome-heart"></li>' +
+                     '</ul></h2></div></header>';
+
+    canvas.width = 1010;
+    canvas.height = 600;
     doc.body.appendChild(canvas);
+    $('body').prepend(gameHeader);
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -44,8 +54,13 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
-        update(dt);
-        render();
+
+         // when the game is paused it doesn't update or render
+        if (app.pause === false) {
+            update(dt);
+            render();
+        };
+
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
@@ -79,7 +94,25 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
+    }
+
+    // checks player position with that of each enemy 
+    function checkCollisions () {
+        app.allEnemies.forEach (function (enemy) {
+            let topEnemyX = enemy.x + 70;
+            let topPlayerX = app.player.x + 70;
+            let topPlayerY = app.player.y + 8;
+
+            if (enemy.y >= app.player.y && enemy.y <= topPlayerY) {
+                if ((app.player.x <= topEnemyX && app.player.x >= enemy.x) || (topPlayerX >= enemy.x && topPlayerX <= topEnemyX)) {
+                    app.player.x = 404;
+                    app.player.y = 390;
+                    // player loses a life upon collisions
+                    app.addLife(false);
+                };
+            };
+        });
     }
 
     /* This is called by the update function and loops through all of the
@@ -90,10 +123,10 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
-        allEnemies.forEach(function(enemy) {
+        app.allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        player.update();
+        app.player.update();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -115,7 +148,7 @@ var Engine = (function(global) {
                 'images/grass-block.png'    // Row 2 of 2 of grass
             ],
             numRows = 6,
-            numCols = 5,
+            numCols = 10,
             row, col;
         
         // Before drawing, clear existing canvas
@@ -149,11 +182,16 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
-        allEnemies.forEach(function(enemy) {
+
+        app.allItems.forEach(function(item) {
+            item.render();
+        });
+
+        app.allEnemies.forEach(function(enemy) {
             enemy.render();
         });
 
-        player.render();
+        app.player.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -161,7 +199,13 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        let now = Date.now(),
+            dt = (now - lastTime) / 1000.0;
+
+        update(dt);
+        render();
+        app.pause = true;
+        app.startGame();
     }
 
     /* Go ahead and load all of the images we know we're going to need to

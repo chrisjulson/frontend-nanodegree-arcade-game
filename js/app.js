@@ -443,14 +443,14 @@ Gem.prototype.randomColor = function () {
     let num = app.randomNumber();
 
     if ( num === 0 ) {
-        this.sprite = 'images/Gem-blue.png';
+        this.sprite = 'images/Gem blue.png';
         this.GEM_VALUE = 300;
     }else {
         if ( num === 1 ) {
-            this.sprite = 'images/Gem-Orange.png';
+            this.sprite = 'images/Gem Orange.png';
             this.GEM_VALUE = 200;
         }else {
-            this.sprite = 'images/Gem-Green.png';
+            this.sprite = 'images/Gem Green.png';
             this.GEM_VALUE = 100;
         }
     }
