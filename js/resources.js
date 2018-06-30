@@ -57,6 +57,7 @@
                  * call all of the onReady() callbacks we have defined.
                  */
                 if(isReady()) {
+                    console.log('callbacks');
                     readyCallbacks.forEach(function(func) { func(); });
                 }
             };
