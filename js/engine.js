@@ -25,7 +25,7 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    let gameHeader = '<header><div class ="game-data"><h2 id="points">' +
+    var gameHeader = '<header><div class="game-data"><h2 id="points">0 pts' +
                      '</h2></div><div class="game-data"><h1 id="level">' +
                      'Level 1</h1></div><div class="game-data"><h2><ul>' +
                      '<li class="fontawesome-heart"></li>' +
@@ -59,7 +59,7 @@ var Engine = (function(global) {
         if (app.pause === false) {
             update(dt);
             render();
-        };
+        }
 
 
         /* Set our lastTime variable which is used to determine the time delta
@@ -99,7 +99,7 @@ var Engine = (function(global) {
 
     // checks player position with that of each enemy 
     function checkCollisions () {
-        app.allEnemies.forEach (function (enemy) {
+        app.allEnemies.forEach (function(enemy) {
             let topEnemyX = enemy.x + 70;
             let topPlayerX = app.player.x + 70;
             let topPlayerY = app.player.y + 8;
@@ -110,8 +110,8 @@ var Engine = (function(global) {
                     app.player.y = 390;
                     // player loses a life upon collisions
                     app.addLife(false);
-                };
-            };
+                }
+            }
         });
     }
 
@@ -152,7 +152,7 @@ var Engine = (function(global) {
             row, col;
         
         // Before drawing, clear existing canvas
-        ctx.clearRect(0,0,canvas.width,canvas.height);
+        //ctx.clearRect(0,0,canvas.width,canvas.height);
 
         /* Loop through the number of rows and columns we've defined above
          * and, using the rowImages array, draw the correct image for that

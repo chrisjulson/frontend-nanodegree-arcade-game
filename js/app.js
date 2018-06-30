@@ -11,7 +11,7 @@ app.allItems = new Map();
 app.LEVEL_UP_POINTS = 100;
 
 // chooses one of three randome numbers 
-app.randomNumber = function () {
+app.randomNumber = function() {
     let num = Math.floor((Math.random()*10)/3);
     return num;
 };
@@ -72,16 +72,16 @@ app.levelUp = function() {
         this.allItems.set(heart.key, heart);
     }
 
-    if (this.level <8 || (this.level >=25 && this.level %5 === 0)) {
+    if (this.level <= 8 || (this.level >= 25 && this.level %5 === 0)) {
         this.spawnEnemies();
     }
 
-    if ((this.level >= 10 && this.level < 26) && this.level %2 === 1) {
+    if ((this.level >= 10 && this.level < 26) && this.level %2 === 0) {
         var rock = new Rock();
         this.allItems.set(rock.key, rock);
     }
 
-    if (this.level >10 && this.level %2 === 1) {
+    if (this.level >= 10 && this.level %2 === 1) {
         var gem = new Gem();
         this.allItems.set(gem.key, gem);
     }
@@ -121,16 +121,16 @@ app.addLife = function(up) {
         //lose condtion when player has no lives and hits enemy 
         if (this.lives === -1) {
             this.pause = true;
-            $('gameOverModal').modal('show');
+            $('#gameOverModal').modal('show');
             $('.restart').click(function() {
-                that.restart;
+                that.restart();
             });
         }
     }
 };
 
 //reset function used to reset everything back to starting values 
-app.restart = function () {
+app.restart = function() {
     var that = this;
 
     this.level = 1;
@@ -162,8 +162,8 @@ app.startGame = function() {
     let selected = null; 
     let that = this; 
 
-    $('startModal').modal('show');
-    $('char-elem').click(function () {
+    $('#startModal').modal('show');
+    $('.char-elem').click(function() {
         // add and removes classes to show choosed player sprite
         if (selected != null) {
             $(selected).removeClass('char-selected');
@@ -173,15 +173,15 @@ app.startGame = function() {
         selected = $(this);
     });
 
-    $('#startButton').off('click').on('click', function () {
+    $('#startButton').off('click').on('click', function() {
         that.createEnemies();
         that.pause = false;
     });
 };
 
-let GameObject = function () {};
+let GameObject = function() {};
 
-GameObject.prototype.getY = function () {
+GameObject.prototype.getY = function() {
     let num = 0;
     switch(app.randomNumber()) {
     case 0:
@@ -197,18 +197,18 @@ GameObject.prototype.getY = function () {
     return num;
 };
 
-let Character = function () {
+let Character = function() {
     GameObject.call(this);
 };
 
 Character.prototype = Object.create(GameObject.prototype);
 Character.prototype.constructor = Character;
 
-Character.prototype.render = function () {
+Character.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Character.prototype.getX = function () {
+Character.prototype.getX = function() {
     let num = 0;
     switch(app.randomNumber()) {
     case 0:
@@ -223,7 +223,7 @@ Character.prototype.getX = function () {
     return num;
 };
 
-Character.prototype.getSpeed = function () {
+Character.prototype.getSpeed = function() {
     return Math.floor(Math.random() * (app.maxSpeed - 100 + 1)) + 100;
 };
 
@@ -263,13 +263,13 @@ Enemy.prototype.update = function(dt) {
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+}; 
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 
-let Player = function () {
+let Player = function() {
     Character.call(this);
     this.PLAYER_X_INIT_COORD = 404;
     this.PLAYER_Y_INIT_COORD = 390;
@@ -291,14 +291,14 @@ Player.prototype = Object(Character.prototype);
 Player.prototype.constructor = Player;
 
 // player bounderies and collition detection with rocks, hearts, gems, bugs, and water 
-Player.prototype.update = function () {
+Player.prototype.update = function() {
     // when player reaches water player gains a level and player is moved back to the start
     if (this.y === -25) {
         this.x = this.PLAYER_X_INIT_COORD;
         this.y = this.PLAYER_Y_INIT_COORD;
-        app.levelUp ();
+        app.levelUp();
     }
-
+//possible location of movement bug 
     //keeps player with in playing field 
     if (this.y >= this.PLAYER_Y_INIT_COORD) {
         this.y = this.PLAYER_Y_INIT_COORD;
@@ -365,7 +365,7 @@ Player.prototype.handleInput = function(key) {
 };
 
 //item creation 
-let Item = function () {
+let Item = function() {
     GameObject.call(this);
     this.x = this.getItemXCord();
     this.y = this.getY();
@@ -376,7 +376,7 @@ let Item = function () {
 
 // checks to make sure no items share the same position 
 // if the item does then a new location and key is generated 
-Item.prototype.checkCords = function () {
+Item.prototype.checkCords = function() {
     while (app.allItems.has(this.key)) {
         this.x = this.getItemXCord();
         this.y = this.getY();
@@ -384,7 +384,7 @@ Item.prototype.checkCords = function () {
     }
 };
 
-Item.prototype.getItemXCord = function () {
+Item.prototype.getItemXCord = function() {
     let num = 0;
     switch(Math.floor(Math.random() * 10)) {
     case 0:
@@ -421,11 +421,11 @@ Item.prototype.getItemXCord = function () {
     return num;
 };
 
-Item.prototype.render = function () {
+Item.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-let Rock = function () {
+let Rock = function() {
     this.sprite = 'images/Rock.png';
     Item.call(this);
 };
@@ -433,13 +433,13 @@ let Rock = function () {
 Rock.prototype = Object.create(Item.prototype);
 Rock.prototype.constructor = Rock;
 
-let Gem = function () {
+let Gem = function() {
     this.randomColor();
     Item.call(this);
 };
 
 // generates a gem of a random color 
-Gem.prototype.randomColor = function () {
+Gem.prototype.randomColor = function() {
     let num = app.randomNumber();
 
     if ( num === 0 ) {
@@ -456,7 +456,7 @@ Gem.prototype.randomColor = function () {
     }
 };
 
-var Heart = function () {
+var Heart = function() {
     this.sprite = 'images/Heart.png';
     Item.call(this);
 };
@@ -465,8 +465,8 @@ Heart.prototype = Object.create(Item.prototype);
 Heart.prototype.constructor = Heart;
 
 //Removes gems and hearts from playing field 
-app.deleteCollectables = function () {
-    this.allItems.forEach( function (item) {
+app.deleteCollectables = function() {
+    this.allItems.forEach( function(item) {
         if (item instanceof Gem || item instanceof Heart) {
             this.allItems.delete(item.key);
         }
@@ -480,7 +480,7 @@ app.deleteCollectables = function () {
 app.allEnemies = [];
 app.player = new Player();
 
-app.createEnemies = function () {
+app.createEnemies = function() {
     this.allEnemies.push(new Enemy());
 };
 
@@ -488,6 +488,7 @@ app.createEnemies = function () {
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
+        32: 'space',
         37: 'left',
         38: 'up',
         39: 'right',
@@ -498,13 +499,13 @@ document.addEventListener('keyup', function(e) {
     if (e.keyCode === 32) {
         app.pause = !app.pause;
         if (app.pause === false) {
-            $('pauseModal').modal('hide');
+            $('#pauseModal').modal('hide');
         } else {
-            $('pauseModal').modal('show');
+            $('#pauseModal').modal('show');
         }
     }
     // disables player from moving during pause state 
     if (app.pause === false) {
-        player.handleInput(allowedKeys[e.keyCode]);
+        app.player.handleInput(allowedKeys[e.keyCode]);
     }
 });
