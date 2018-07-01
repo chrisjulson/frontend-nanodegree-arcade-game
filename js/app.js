@@ -73,7 +73,7 @@ app.levelUp = function() {
     }
 
     if (this.level <= 8 || (this.level >= 25 && this.level %5 === 0)) {
-        this.spawnEnemies();
+        this.createEnemies();
     }
 
     if ((this.level >= 10 && this.level < 26) && this.level %2 === 0) {
@@ -110,13 +110,13 @@ app.addLife = function(up) {
     if (up === true) {
         if (this.lives < 3) {
             elem = elements[this.lives];
-            $(elem).toggleClass('fontawesome-heart-empty fontawesome-heart');
+            $(elem).toggleClass('far fa-heart fas fa-heart');
             this.lives++;
         }
     } else { // removes a life when player collides with enemy 
         this.lives--;
         elem = elements[this.lives];
-        $(elem).toggleClass('fontawesome-heart fontawesome-heart-empty');
+        $(elem).toggleClass('fas fa-heart far fa-heart');
 
         //lose condtion when player has no lives and hits enemy 
         if (this.lives === -1) {
@@ -150,8 +150,8 @@ app.restart = function() {
     for (var i = 0; i < 3; i++) {
         var heartElem = elements[i];
         // used to fix a bug with toggleclass
-        $(heartElem).removeClass('fontawesom-heart-empty');
-        $(heartElem).addClass('fontawesom-heart');
+        $(heartElem).removeClass('far fa-heart');
+        $(heartElem).addClass('fas fa-heart');
     }
 
     this.startGame();
@@ -187,7 +187,6 @@ GameObject.prototype.getY = function() {
     case 0:
         num = 60;
         break;
-
     case 1:
         num = 143;
         break;
@@ -209,7 +208,7 @@ Character.prototype.render = function() {
 };
 
 Character.prototype.getX = function() {
-    let num = 0;
+    var num = 0;
     switch(app.randomNumber()) {
     case 0:
         num = -150;
@@ -281,7 +280,7 @@ let Player = function() {
     this.sprite = 'images/char-boy.png';
     // player bounderies 
     this.PLAYER_RIGHT_LIMIT = 909;
-    this.PLAYER_LEFT_LINIT = 0;
+    this.PLAYER_LEFT_LIMIT = 0;
     // makses player movement more fluid 
     this.PLAYER_Y_MOVE = 83;
     this.PLAYER_X_MOVE = 101;
@@ -298,14 +297,14 @@ Player.prototype.update = function() {
         this.y = this.PLAYER_Y_INIT_COORD;
         app.levelUp();
     }
-//possible location of movement bug 
+
     //keeps player with in playing field 
     if (this.y >= this.PLAYER_Y_INIT_COORD) {
         this.y = this.PLAYER_Y_INIT_COORD;
     }
     
-    if (this.x <= this.PLAYER_LEFT_LINIT) {
-        this.x = this.PLAYER_LEFT_LINIT;
+    if (this.x <= this.PLAYER_LEFT_LIMIT) {
+        this.x = this.PLAYER_LEFT_LIMIT;
     }
 
     if (this.x >= this.PLAYER_RIGHT_LIMIT) {
@@ -315,7 +314,7 @@ Player.prototype.update = function() {
     //manages interaction with rocks, gems and hearts 
     if (app.allItems.size > 0) {
         app.allItems.forEach(function(item) {
-            if (this.x === item.x && (item.y - this.y <= 5 && item.y - this.y > 0)) {
+            if (this.x === item.x && (item.y - this.y <= 5 && item.y - this.y >= 0)) {
                 if (item instanceof Rock) {
                     // when player enters a space with a rock player is returned to previous locaiton
                     this.x = this.x - this.xplus;
@@ -349,17 +348,17 @@ Player.prototype.handleInput = function(key) {
         this.x = this.x - this.PLAYER_X_MOVE;
         this.xplus = - this.PLAYER_X_MOVE;
         break;
-    case 'right':
-        this.x = this.x + this.PLAYER_X_MOVE;
-        this.xplus = this.PLAYER_X_MOVE;
-        break;
     case 'up':
         this.y = this.y - this.PLAYER_Y_MOVE;
         this.yplus = - this.PLAYER_Y_MOVE;
         break;
+    case 'right':
+        this.x = this.x + this.PLAYER_X_MOVE;
+        this.xplus = this.PLAYER_X_MOVE;
+        break;
     case 'down':
         this.y = this.y + this.PLAYER_Y_MOVE;
-        this.y = this.y = this.PLAYER_Y_MOVE;
+        this.yplus = this.PLAYER_Y_MOVE;
         break;
     }
 };
@@ -370,9 +369,12 @@ let Item = function() {
     this.x = this.getItemXCord();
     this.y = this.getY();
     // creates a key to store item on map
-    this.key = this.x.toString() + this.y.toString();
+    this.key = this.x.toString()+this.y.toString();
     this.checkCords();
 };
+
+Item.prototype = Object.create(GameObject.prototype);
+Item.prototype.constructor = Item;
 
 // checks to make sure no items share the same position 
 // if the item does then a new location and key is generated 
@@ -380,13 +382,13 @@ Item.prototype.checkCords = function() {
     while (app.allItems.has(this.key)) {
         this.x = this.getItemXCord();
         this.y = this.getY();
-        this.key = this.x.toString() + this.y.toString();
+        this.key = this.x.toString()+this.y.toString();
     }
 };
 
 Item.prototype.getItemXCord = function() {
     let num = 0;
-    switch(Math.floor(Math.random() * 10)) {
+    switch(Math.floor(Math.random()*10)) {
     case 0:
         num = 0;
         break;
@@ -402,7 +404,7 @@ Item.prototype.getItemXCord = function() {
     case 4:
         num = 404;
         break;
-    case 5:
+    case 5: 
         num = 505;
         break;
     case 6:
@@ -438,12 +440,15 @@ let Gem = function() {
     Item.call(this);
 };
 
+Gem.prototype = Object.create(Item.prototype);
+Gem.prototype.constructor = Gem;
+
 // generates a gem of a random color 
 Gem.prototype.randomColor = function() {
     let num = app.randomNumber();
 
     if ( num === 0 ) {
-        this.sprite = 'images/Gem blue.png';
+        this.sprite = 'images/Gem Blue.png';
         this.GEM_VALUE = 300;
     }else {
         if ( num === 1 ) {
@@ -456,7 +461,7 @@ Gem.prototype.randomColor = function() {
     }
 };
 
-var Heart = function() {
+let Heart = function() {
     this.sprite = 'images/Heart.png';
     Item.call(this);
 };

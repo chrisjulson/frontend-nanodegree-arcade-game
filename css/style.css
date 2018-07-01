@@ -1,8 +1,3 @@
-@import url(http://http://weloveiconfonts.com/api/?family=fontawesome);
-[class*="fontawesom-"]::before {
-    font-family: 'fontawesome', sans-serif;
-}
-
 body {
     text-align: center;
 }
@@ -21,8 +16,12 @@ header {
 .game-data {
     display: inline-block;
     width: 33%;
-    color: #0192b5;
+    color: #07090a;
     font-family: "brandon-grotesque", Arial, Helvetica, sans-serif;
+}
+
+#heart {
+    color: #aa0808;
 }
 
 li {

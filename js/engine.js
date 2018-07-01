@@ -28,9 +28,9 @@ var Engine = (function(global) {
     var gameHeader = '<header><div class="game-data"><h2 id="points">0 pts' +
                      '</h2></div><div class="game-data"><h1 id="level">' +
                      'Level 1</h1></div><div class="game-data"><h2><ul>' +
-                     '<li class="fontawesome-heart"></li>' +
-                     '<li class="fontawesome-heart"></li>' +
-                     '<li class="fontawesome-heart"></li>' +
+                     '<li class="fas fa-heart" id="heart"></li>' +
+                     '<li class="fas fa-heart" id="heart"></li>' +
+                     '<li class="fas fa-heart" id="heart"></li>' +
                      '</ul></h2></div></header>';
 
     canvas.width = 1010;
