@@ -7,6 +7,7 @@ The main gole of this project was to create a classic arcade game inspired by th
 - Download the zip file 
 - unzip the file 
 - locate and open index.html in your favorate browser 
+- [or use this link](https://chrisjulson.github.io/frogger/index.html)
 
 ## How to play:
 - select your sprite from the selection screen
